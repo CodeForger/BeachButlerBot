@@ -11,7 +11,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "axios": "^0.15.3"
+  },
   "devDependencies": {
     "serverless": "^1.5.0"
   }
