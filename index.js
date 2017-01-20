@@ -1,68 +1,56 @@
 'use strict';
 
-const axios = require('axios')
-const AWS = require('aws-sdk')
+const Axios = require('axios')
 
 const TELEBOT_SEND_URL = 'https://api.telegram.org/bot307190391:AAHnTchavq2eg7KVXKgKXVxpIifDBayAnUo/sendMessage'
-const RESPONSE_OK = {statusCode: 200, body: "OK"}
+const RESPONSE_OK = {statusCode: 200, body: '{}'}
 
 exports.handleBotUpdate = (event, context, callback) => {
-  console.log(`event ${event.body}`)
 
   try {
     const body = JSON.parse(event.body).message
+
+    console.log(`event ${JSON.stringify(body)}`)
+
     const chat = body.chat
     const newMember = body.new_chat_member
 
     let reply
 
     if (newMember) {
-      reply = _handleNewJoiner(newMember)
+      reply = handleNewJoiner(newMember)
+
+      console.log('in new member if: '+reply);
     }
 
+
     if (reply) {
-      axios.post(TELEBOT_SEND_URL, {
+      Axios.post(TELEBOT_SEND_URL, {
         chat_id: chat.id,
         text: reply,
         parse_mode: 'HTML'
-      }).then(_ => {callback(null, RESPONSE_OK)})
+      })
+      .then( () => {callback(null, {})} )
+      .catch( e => {
+        throw new Error('request error')
+      })
+    } else {
+      callback(null, {})
     }
 
-
   } catch (e) {
-    console.log(e);
+    console.log(e)
+    callback(null, {})
   }
 
 }
 
-const _handleNewJoiner = (newMember) => {
-
-  return
-`
-Welcome ${newMember.first_name} @${newMember.username}!
-
-${_getOnboardingMsg()}
-`
+function handleNewJoiner(newMember) {
+  return `Welcome ${newMember.first_name}! (@${newMember.username})\n${getOnBoardingMessage()}`
 }
 
-function _getOnboardingMsg() {
-  const Bucket = "twsg-beach-bot";
-  const Key = "welcome-messages/index";
 
-  const S3 = new AWS.S3();
-  S3.getObject({
-    Bucket: Bucket,
-    Key: Key
-  }, (err, data) => {
-    if (err) {
-      return 'Welcome!'
-    } else {
-      return data.Body.toString()
-    }
-  })
-}
-
-function _uploadOnBoardingMessage() {
+function getOnBoardingMessage() {
   const ONBOARDING_DOC = 'https://thoughtworks.jiveon.com/groups/people-space-singapore/blog/2016/12/19/welcome-to-thoughtworks-singapore'
   const IOT = 'https://telegram.me/joinchat/AxfJpgZBKoZaSwK35ZJtpw'
   const P3 = 'https://telegram.me/joinchat/B0GDdQlbGI_jlYK7eXFlsw'
@@ -82,17 +70,5 @@ Please check out other TWSG telegram groups too:
 <a href="${PEDDLER}">TW Peddlers</a>
 `
 
-  const S3 = new AWS.S3()
-
-  S3.putObject({
-    Bucket: bucket,
-    Key: key,
-    ContentType: contentType,
-    Body: MSG}, (err, data) => {
-    if (err) {
-      console.error(err)
-    } else {
-      console.log(`Successfully uploaded ${JSON.stringify(data)} to ${bucket} - ${key}`)
-    }
-  })
+  return MSG
 }

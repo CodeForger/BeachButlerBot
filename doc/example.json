@@ -1,0 +1,29 @@
+{
+  "update_id" : 759025953,
+  "message" : {
+    "message_id" : 36,
+    "from" : {
+      "id" : 246315764,
+      "first_name" : "Chenshu",
+      "last_name" : "Yi",
+      "username" : "yiChenshu"
+    },
+    "chat" : {
+      "id" : -180806956,
+      "title" : "beach butler",
+      "type" : "group",
+      "all_members_are_administrators" : true
+    },
+    "date" : 1484814797,
+    "new_chat_participant" : {
+      "id" : 127196034,
+      "first_name" : "DeLorean",
+      "username" : "delorean_bot"
+    },
+    "new_chat_member" : {
+      "id" : 127196034,
+      "first_name" : "DeLorean",
+      "username" : "delorean_bot"
+    }
+  }
+}
