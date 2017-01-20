@@ -1,11 +1,14 @@
+'use strict';
+
 const axios = require('axios')
+const AWS = require('aws-sdk')
 
 const TELEBOT_SEND_URL = 'https://api.telegram.org/bot307190391:AAHnTchavq2eg7KVXKgKXVxpIifDBayAnUo/sendMessage'
 const RESPONSE_OK = {statusCode: 200, body: "OK"}
 
 exports.handleBotUpdate = (event, context, callback) => {
   console.log(`event ${event.body}`)
-  //console.log(`context ${JSON.stringify(context)}`)
+
   try {
     const body = JSON.parse(event.body).message
     const chat = body.chat
@@ -32,7 +35,6 @@ exports.handleBotUpdate = (event, context, callback) => {
 
 }
 
-
 const _handleNewJoiner = (newMember) => {
 
   return
@@ -43,7 +45,24 @@ ${_getOnboardingMsg()}
 `
 }
 
-const _getOnboardingMsg() {
+function _getOnboardingMsg() {
+  const Bucket = "twsg-beach-bot";
+  const Key = "welcome-messages/index";
+
+  const S3 = new AWS.S3();
+  S3.getObject({
+    Bucket: Bucket,
+    Key: Key
+  }, (err, data) => {
+    if (err) {
+      return 'Welcome!'
+    } else {
+      return data.Body.toString()
+    }
+  })
+}
+
+function _uploadOnBoardingMessage() {
   const ONBOARDING_DOC = 'https://thoughtworks.jiveon.com/groups/people-space-singapore/blog/2016/12/19/welcome-to-thoughtworks-singapore'
   const IOT = 'https://telegram.me/joinchat/AxfJpgZBKoZaSwK35ZJtpw'
   const P3 = 'https://telegram.me/joinchat/B0GDdQlbGI_jlYK7eXFlsw'
@@ -62,5 +81,18 @@ Please check out other TWSG telegram groups too:
 <a href="${BASKETBALL}">ThoughtWorks Basketball</a>
 <a href="${PEDDLER}">TW Peddlers</a>
 `
-  return MSG
+
+  const S3 = new AWS.S3()
+
+  S3.putObject({
+    Bucket: bucket,
+    Key: key,
+    ContentType: contentType,
+    Body: MSG}, (err, data) => {
+    if (err) {
+      console.error(err)
+    } else {
+      console.log(`Successfully uploaded ${JSON.stringify(data)} to ${bucket} - ${key}`)
+    }
+  })
 }
