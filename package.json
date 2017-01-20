@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "deploy": "serverless deploy",
+    "deployProd": "serverless deploy --stage prod",
     "test": "mocha $(find src -path '*.test.js')"
   },
   "keywords": [],
