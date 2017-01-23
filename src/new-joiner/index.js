@@ -28,6 +28,20 @@ function getOnBoardingMessage() {
   )
 }
 
+function getTelegramGroupsMessage() {
+  return new Promise(
+    function (resolve, reject) {
+      readTelegramGroupsFile(function (err, resp) {
+        if (err) {
+          reject(err)
+        }
+
+        resolve(resp)
+      })
+    }
+  )
+}
+
 function readOnboardingMessageFile(callback) {
   DriveClient.readFileFromDrive(process.env.ONBOARDING_MESSAGE_FILE_ID, callback);
 }
@@ -37,8 +51,8 @@ function readTelegramGroupsFile(callback) {
 }
 
 
-
 module.exports = {
   getWelcomeMessage,
-  getOnBoardingMessage
+  getOnBoardingMessage,
+  getTelegramGroupsMessage
 }
