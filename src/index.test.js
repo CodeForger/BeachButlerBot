@@ -16,12 +16,12 @@ describe("HandleBotUpdate", function() {
   it("should call NewJoiner when there's new joiner", function() {
     const welcome = Sinon.spy(NewJoiner, 'getWelcomeMessage')
     HandleBotUpdate(NewJoinerFixture, context, callback)
-    expect(welcome.called).to.be.true
+    expect(welcome.calledWith({ id: 227125721, first_name: 'Alice', username: 'alice' })).to.be.true
   })
 
   it("should call command handler when there's a command", function() {
     const extractCommand = Sinon.spy(Helper, 'extractCommand')
     HandleBotUpdate(CommandFixture, context, callback)
-    expect(extractCommand.called).to.be.true
+    expect(extractCommand.calledWith('/groups@twsg_bot')).to.be.true
   })
 })
