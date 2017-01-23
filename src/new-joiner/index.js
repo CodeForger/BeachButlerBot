@@ -57,7 +57,7 @@ function readFileFromDrive(fileId, callback) {
 }
 
 function createGoogleClient() {
-  const jsonKey = JSON.parse(process.env.JSON_KEY)
+  const jsonKey = JSON.parse(new Buffer(process.env.JSON_KEY, 'base64').toString('ascii'))
 
   return new google.auth.JWT(
     jsonKey.client_email,
