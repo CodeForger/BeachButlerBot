@@ -7,5 +7,5 @@ function extractCommand(message) {
 }
 
 module.exports = {
-  extractCommand: extractCommand
+  extractCommand
 }

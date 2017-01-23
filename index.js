@@ -2,6 +2,7 @@
 
 const Axios = require('axios')
 const Helper = require('./src/helper')
+const NewJoiner = require('./src/new-joiner')
 
 const BOT_TOKEN = process.env.BOT_TOKEN
 const TELEBOT_SEND_URL = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`
@@ -21,7 +22,7 @@ exports.handleBotUpdate = (event, context, callback) => {
     let reply
 
     if (newMember) {
-      reply = handleNewJoiner(newMember)
+      reply = NewJoiner.getWelcomeMessage(newMember)
     } else if (botCommand) {
       const command = Helper.extractCommand(botCommand)
       reply = commandHandler(command)
@@ -52,7 +53,7 @@ exports.handleBotUpdate = (event, context, callback) => {
 function commandHandler(command) {
   switch (command.toLowerCase()) {
     case 'onboarding':
-      return getOnBoardingMessage()
+      return NewJoiner.getOnBoardingMessage()
 
     case 'groups':
       return getOtherGroups()
@@ -60,10 +61,6 @@ function commandHandler(command) {
     default:
       return false
   }
-}
-
-function handleNewJoiner(newMember) {
-  return `Welcome ${newMember.first_name}! (@${newMember.username})\n\n${getOnBoardingMessage()}`
 }
 
 function getOtherGroups() {
@@ -84,10 +81,4 @@ Please check out other TWSG telegram groups:
 `
 
   return MSG
-}
-
-
-function getOnBoardingMessage() {
-  const ONBOARDING_DOC = 'https://thoughtworks.jiveon.com/groups/people-space-singapore/blog/2016/12/19/welcome-to-thoughtworks-singapore'
-  return `Here are some links you may find helpful:\n<a href="${ONBOARDING_DOC}">TWSG Onboarding Info Pack</a>\n\n${getOtherGroups()}`
 }
