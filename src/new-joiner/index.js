@@ -30,6 +30,20 @@ function getOnBoardingMessage() {
   )
 }
 
+function getTelegramGroupsMessage() {
+  return new Promise(
+    function (resolve, reject) {
+      readTelegramGroupsFile(function (err, resp) {
+        if (err) {
+          reject(err)
+        }
+
+        resolve(resp)
+      })
+    }
+  )
+}
+
 function readOnboardingMessageFile(callback) {
   readFileFromDrive(process.env.ONBOARDING_MESSAGE_FILE_ID, callback);
 }
@@ -70,5 +84,6 @@ function createGoogleClient() {
 
 module.exports = {
   getWelcomeMessage,
-  getOnBoardingMessage
+  getOnBoardingMessage,
+  getTelegramGroupsMessage
 }
