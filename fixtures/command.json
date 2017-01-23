@@ -1,0 +1,3 @@
+{
+  "body": "{\"message\":{\"message_id\":18,\"from\":{\"id\":246315764,\"first_name\":\"Chenshu\",\"last_name\":\"Yi\",\"username\":\"yiChenshu\"},\"chat\":{\"id\":-189113788,\"title\":\"BotTest\",\"type\":\"group\",\"all_members_are_administrators\":true},\"date\":1485068503,\"text\":\"/groups@twsg_bot\",\"entities\":[{\"type\":\"bot_command\",\"offset\":0,\"length\":16}]}}"
+}
