@@ -22,7 +22,7 @@ function readFileFromDrive(fileId, callback) {
 }
 
 function createGoogleClient() {
-  const jsonKey = JSON.parse(new Buffer(process.env.JSON_KEY, 'base64').toString('ascii'))
+  const jsonKey = readJsonKey()
 
   return new google.auth.JWT(
     jsonKey.client_email,
@@ -31,6 +31,10 @@ function createGoogleClient() {
     ['https://www.googleapis.com/auth/drive.readonly'],
     null
   )
+}
+
+function readJsonKey() {
+  return JSON.parse(new Buffer(process.env.JSON_KEY, 'base64').toString('ascii'))
 }
 
 module.exports = {
