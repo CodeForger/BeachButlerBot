@@ -3,6 +3,8 @@
 const Axios = require('axios')
 const Helper = require('./src/helper')
 const NewJoiner = require('./src/new-joiner')
+const Async = require('async')
+
 
 const BOT_TOKEN = process.env.BOT_TOKEN
 const TELEBOT_SEND_URL = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`
@@ -25,22 +27,9 @@ exports.handleBotUpdate = (event, context, callback) => {
       reply = NewJoiner.getWelcomeMessage(newMember)
     } else if (botCommand) {
       const command = Helper.extractCommand(botCommand)
-      reply = commandHandler(command)
-    }
-
-
-    if (reply) {
-      Axios.post(TELEBOT_SEND_URL, {
-        chat_id: chat.id,
-        text: reply,
-        parse_mode: 'HTML'
-      })
-      .then( () => {callback(null, {})} )
-      .catch( e => {
-        throw new Error('request error')
-      })
-    } else {
-      callback(null, {})
+      commandHandler(command)
+      .then( reply => {sendMessage(chat.id, reply, callback)} )
+      .catch( e => {callback(null, {})} )
     }
 
   } catch (e) {
@@ -50,35 +39,25 @@ exports.handleBotUpdate = (event, context, callback) => {
 
 }
 
+function sendMessage(chatID, reply, callback) {
+  Axios.post(TELEBOT_SEND_URL, {
+    chat_id: chatID,
+    text: reply,
+    parse_mode: 'HTML'
+  })
+  .then( () => {callback(null, {})} )
+  .catch( e => {throw new Error('request error')} )
+}
+
 function commandHandler(command) {
   switch (command.toLowerCase()) {
     case 'onboarding':
       return NewJoiner.getOnBoardingMessage()
 
     case 'groups':
-      return getOtherGroups()
+      return NewJoiner.getTelegramGroupsMessage()
 
     default:
       return false
   }
-}
-
-function getOtherGroups() {
-  const IOT = 'https://telegram.me/joinchat/AxfJpgZBKoZaSwK35ZJtpw'
-  const P3 = 'https://telegram.me/joinchat/B0GDdQlbGI_jlYK7eXFlsw'
-  const FOOTBALL = 'https://telegram.me/joinchat/BsuxAT3CT0iY-Zpqv9o_wQ'
-  const BASKETBALL = 'https://telegram.me/joinchat/BBGuFAZirVJVjJhI8Cwcz'
-  const PEDDLER = 'https://telegram.me/joinchat/BfDFnT70193_qzb5KpjEyw'
-
-  const MSG =
-`
-Please check out other TWSG telegram groups:
-<a href="${IOT}">IoT/ Makers Night</a>
-<a href="${P3}">P3 Singapore</a>
-<a href="${FOOTBALL}">Monday Night Football</a>
-<a href="${BASKETBALL}">ThoughtWorks Basketball</a>
-<a href="${PEDDLER}">TW Peddlers</a>
-`
-
-  return MSG
 }
