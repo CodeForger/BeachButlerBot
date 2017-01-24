@@ -3,12 +3,9 @@
 const Axios = require('axios')
 const Helper = require('./src/helper')
 const NewJoiner = require('./src/new-joiner')
-const Async = require('async')
-
 
 const BOT_TOKEN = process.env.BOT_TOKEN
 const TELEBOT_SEND_URL = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`
-const RESPONSE_OK = {statusCode: 200, body: '{}'}
 
 exports.handleBotUpdate = (event, context, callback) => {
 
@@ -26,11 +23,16 @@ exports.handleBotUpdate = (event, context, callback) => {
     if (newMember) {
       reply = NewJoiner.getWelcomeMessage(newMember)
     } else if (botCommand) {
-      const command = Helper.extractCommand(botCommand)
-      commandHandler(command)
-      .then( reply => {sendMessage(chat.id, reply, callback)} )
-      .catch( e => {callback(null, {})} )
+      reply = commandHandler(Helper.extractCommand(botCommand))
     }
+
+    reply
+      .then(message => {
+        sendMessage(chat.id, message, callback)
+      })
+      .catch(e => {
+        callback(null, {})
+      })
 
   } catch (e) {
     console.log(e)
