@@ -3,7 +3,10 @@
 const DriveClient = require('../drive-client')
 
 function getWelcomeMessage(newMember) {
-  return `Welcome ${newMember.first_name}! (@${newMember.username})\n\n${getOnBoardingMessage()}`
+  return getOnBoardingMessage()
+    .then(values => {
+      return `Welcome ${newMember.first_name}! (@${newMember.username})\n\n${values}`
+    })
 }
 
 function getOnBoardingMessage() {
