@@ -33,6 +33,8 @@ exports.handleBotUpdate = (event, context, callback) => {
       .catch(e => {
         callback(null, {})
       })
+    } else {
+      callback(null, {})
     }
 
   } catch (e) {
