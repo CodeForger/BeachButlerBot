@@ -35,6 +35,7 @@ describe("new-joiner", function() {
 
   after(function () {
     process.env = originalEnv
+    DriveClient.readFileFromDrive.restore()
   })
 
   describe("#getWelcomeMessage()", function() {
@@ -61,7 +62,6 @@ describe("new-joiner", function() {
   })
 
   describe('#getTelegramGroupsMessage()', function () {
-    
     it('should return telegram groups message', function () {
       return NewJoiner.getTelegramGroupsMessage()
         .then(resp => {
