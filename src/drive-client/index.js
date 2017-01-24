@@ -3,22 +3,26 @@
 const google = require('googleapis');
 const drive = google.drive('v3');
 
-function readFileFromDrive(fileId, callback) {
+function readFileFromDrive(fileId) {
   const jwtClient = createGoogleClient();
 
-  jwtClient.authorize(function (err) {
-    if (err) {
-      callback(err, null)
-    }
+  return new Promise(
+    function (resolve, reject) {
+      jwtClient.authorize(function (err) {
+        if (err) {
+          reject(err)
+        }
 
-    drive.files.get({
-      fileId: fileId,
-      auth: jwtClient,
-      alt: 'media'
-    }, function (err, resp) {
-      callback(null, resp)
-    })
-  })
+        drive.files.get({
+          fileId: fileId,
+          auth: jwtClient,
+          alt: 'media'
+        }, function (err, resp) {
+          resolve(resp)
+        })
+      })
+    }
+  )
 }
 
 function createGoogleClient() {
