@@ -20,9 +20,7 @@ function getOnBoardingMessage() {
 function getTelegramGroupsMessage() {
   return Promise.all([readTelegramGroupsFile()])
     .then(values => {
-      const telegramGroups = values[0]
-
-      return telegramGroups
+      return values[0]
     });
   }
 
