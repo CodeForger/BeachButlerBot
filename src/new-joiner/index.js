@@ -18,10 +18,7 @@ function getOnBoardingMessage() {
 
 
 function getTelegramGroupsMessage() {
-  return Promise.all([readTelegramGroupsFile()])
-    .then(values => {
-      return values[0]
-    });
+  return readTelegramGroupsFile()
   }
 
 function readOnboardingMessageFile() {
