@@ -26,13 +26,14 @@ exports.handleBotUpdate = (event, context, callback) => {
       reply = commandHandler(Helper.extractCommand(botCommand))
     }
 
-    reply
-      .then(message => {
+    if (reply) {
+      reply.then(message => {
         sendMessage(chat.id, message, callback)
       })
       .catch(e => {
         callback(null, {})
       })
+    }
 
   } catch (e) {
     console.log(e)
