@@ -4,16 +4,16 @@ const DriveClient = require('../drive-client')
 
 function getWelcomeMessage(newMember) {
   return getOnBoardingMessage()
-    .then(values => {
-      return `Welcome ${newMember.first_name}! (@${newMember.username})\n\n${values}`
+    .then(onboardingMessage => {
+      return `Welcome ${newMember.first_name}! (@${newMember.username})\n\n${onboardingMessage}`
     })
 }
 
 function getOnBoardingMessage() {
   return Promise.all([readOnboardingMessageFile(), readTelegramGroupsFile()])
-    .then(values => {
-      const onboardingMessage = values[0]
-      const telegramGroups = values[1]
+    .then(messages => {
+      const onboardingMessage = messages[0]
+      const telegramGroups = messages[1]
 
       return `${onboardingMessage}\n\n${telegramGroups}`
     });

@@ -13,11 +13,7 @@ describe("new-joiner", function() {
   const ONBOARDING_MESSAGE = 'onboarding-message'
   const TELEGRAM_GROUPS_MESSAGE = 'telegram-groups-message'
 
-  let originalEnv
-
   before(function () {
-    originalEnv = process.env
-
     process.env.ONBOARDING_MESSAGE_FILE_ID = ONBOARDING_MESSAGE_FILE_ID
     process.env.TELEGRAM_GROUPS_FILE_ID = TELEGRAM_GROUPS_FILE_ID
 
@@ -34,7 +30,9 @@ describe("new-joiner", function() {
   })
 
   after(function () {
-    process.env = originalEnv
+    delete process.env.ONBOARDING_MESSAGE_FILE_ID
+    delete process.env.TELEGRAM_GROUPS_FILE_ID
+
     DriveClient.readFileFromDrive.restore()
   })
 
@@ -43,32 +41,29 @@ describe("new-joiner", function() {
 
     it("should return the welcome message", function() {
       return NewJoiner.getWelcomeMessage(newMember)
-        .then(resp => {
-          expect(resp)
+        .then(message => {
+          expect(message)
             .to.equal(`Welcome ${newMember.first_name}! (@${newMember.username})\n\n${getExpectedOnboardingMessage()}`)
         })
     })
   })
 
   describe('getOnBoardingMessage()', function () {
-
     it('should return onboarding & telegram groups message', function () {
       return NewJoiner.getOnBoardingMessage()
-        .then(resp => {
-          expect(resp).to.equal(getExpectedOnboardingMessage())
+        .then(message => {
+          expect(message).to.equal(getExpectedOnboardingMessage())
         })
     })
-
   })
 
   describe('#getTelegramGroupsMessage()', function () {
     it('should return telegram groups message', function () {
       return NewJoiner.getTelegramGroupsMessage()
-        .then(resp => {
-          expect(resp).to.equal(TELEGRAM_GROUPS_MESSAGE)
+        .then(message => {
+          expect(message).to.equal(TELEGRAM_GROUPS_MESSAGE)
         })
     })
-
   })
 
   function getExpectedOnboardingMessage() {
