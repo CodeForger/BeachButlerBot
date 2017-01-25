@@ -1,9 +1,7 @@
 'use strict'
 
 const Promise = require('bluebird')
-
 const google = require('googleapis')
-const drive = google.drive('v3')
 
 const driveAuth = require('./auth')
 
@@ -17,6 +15,8 @@ function readFileFromDrive(fileId) {
 }
 
 function getFile(fileId, auth) {
+  const drive = google.drive('v3')
+
   return Promise.promisify(drive.files.get)({
     fileId: fileId,
     auth: auth,
