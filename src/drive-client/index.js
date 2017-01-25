@@ -1,44 +1,27 @@
 'use strict'
 
-const google = require('googleapis');
-const drive = google.drive('v3');
+const Promise = require('bluebird')
+
+const google = require('googleapis')
+const drive = google.drive('v3')
+
+const driveAuth = require('./auth')
 
 function readFileFromDrive(fileId) {
-  const jwtClient = createGoogleClient();
+  const auth = Promise.promisifyAll(driveAuth.createGoogleJwtAuth())
 
-  return new Promise(
-    function (resolve, reject) {
-      jwtClient.authorize(function (err) {
-        if (err) {
-          reject(err)
-        }
-
-        drive.files.get({
-          fileId: fileId,
-          auth: jwtClient,
-          alt: 'media'
-        }, function (err, resp) {
-          resolve(resp)
-        })
-      })
-    }
-  )
+  return auth.authorizeAsync()
+    .then(() => {
+      return getFile(fileId, auth)
+    })
 }
 
-function createGoogleClient() {
-  const jsonKey = readJsonKey()
-
-  return new google.auth.JWT(
-    jsonKey.client_email,
-    null,
-    jsonKey.private_key,
-    ['https://www.googleapis.com/auth/drive.readonly'],
-    null
-  )
-}
-
-function readJsonKey() {
-  return JSON.parse(new Buffer(process.env.JSON_KEY, 'base64').toString('ascii'))
+function getFile(fileId, auth) {
+  return Promise.promisify(drive.files.get)({
+    fileId: fileId,
+    auth: auth,
+    alt: 'media'
+  })
 }
 
 module.exports = {
